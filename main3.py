@@ -2,6 +2,8 @@ import cv2
 import mediapipe as mp
 import numpy as np
 import joblib
+import time
+import pyttsx3
 
 # ---------------- Load trained model and label encoder ----------------
 model = joblib.load("rf_model2.joblib")
@@ -17,6 +19,16 @@ hands = mp_hands.Hands(
 )
 mp_drawing = mp.solutions.drawing_utils
 
+# ---------------- Initialize TTS Engine ----------------
+engine = pyttsx3.init()
+engine.setProperty('rate', 150)  # Speech speed
+
+# ---------------- Sentence Formation Variables ----------------
+prev_letter = ""
+stable_start = None
+stable_duration = 1.5  # seconds
+sentence = ""
+
 # ---------------- Start Webcam ----------------
 cap = cv2.VideoCapture(0)
 
@@ -25,23 +37,17 @@ while cap.isOpened():
     if not ret:
         break
 
-    # Flip for natural selfie view
     frame = cv2.flip(frame, 1)
     rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-
     results = hands.process(rgb_frame)
-
     landmark_list = []
 
     if results.multi_hand_landmarks:
         for hand_landmarks in results.multi_hand_landmarks:
-            # Draw landmarks
             mp_drawing.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
-
             for lm in hand_landmarks.landmark:
                 landmark_list.extend([lm.x, lm.y])
 
-        # If only one hand detected, pad with zeros
         if len(results.multi_hand_landmarks) == 1:
             landmark_list.extend([0.0] * 42)
 
@@ -49,22 +55,41 @@ while cap.isOpened():
             input_data = np.array(landmark_list).reshape(1, -1)
             prediction = model.predict(input_data)[0]
             predicted_label = label_encoder.inverse_transform([prediction])[0]
-            predicted_label = chr(int(str(predicted_label))+65)  # Assuming labels are encoded as 0-25 for A-Z
-            # Show prediction
-            cv2.putText(frame, f'Prediction: {predicted_label},', (10, 40),
-                        cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 255, 0), 3)
+            predicted_letter = chr(int(predicted_label) + 65)
 
+            if predicted_letter == prev_letter:
+                if stable_start is None:
+                    stable_start = time.time()
+                elif time.time() - stable_start >= stable_duration:
+                    sentence += predicted_letter
+                    stable_start = None
+                    prev_letter = ""
+            else:
+                prev_letter = predicted_letter
+                stable_start = time.time()
+
+            cv2.putText(frame, f'Prediction: {predicted_letter}', (10, 40),
+                        cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 255, 0), 3)
     else:
         cv2.putText(frame, 'No hands detected', (10, 40),
                     cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2)
+        prev_letter = ""
+        stable_start = None
 
-    # Show frame
+    cv2.putText(frame, f'Sentence: {sentence}', (10, 90),
+                cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
+
     cv2.imshow("SnapSign - ISL Translator", frame)
 
-    # Exit with 'q'
-    if cv2.waitKey(1) & 0xFF == ord("q"):
+    key = cv2.waitKey(1) & 0xFF
+    if key == ord("q"):
         break
+    elif key == ord("c"):
+        sentence = ""  # Clear sentence
+    elif key == ord("s"):
+        if sentence:
+            engine.say(sentence)
+            engine.runAndWait()
 
-# Cleanup
 cap.release()
 cv2.destroyAllWindows()

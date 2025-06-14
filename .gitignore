@@ -1,0 +1,4 @@
+venv
+
+rf_model2.joblib
+label_encoder2.joblib
