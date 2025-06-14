@@ -89,4 +89,3 @@ while cap.isOpened():
 # Cleanup
 cap.release()
 cv2.destroyAllWindows()
-
