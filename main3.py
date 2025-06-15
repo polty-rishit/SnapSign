@@ -110,7 +110,9 @@ while cap.isOpened():
     elif key == ord("v"):
         spoken_text = recognize_speech()
         if spoken_text:
-            cv2.putText(frame, f"You said: {spoken_text}", (10, 130),
+            height, width = frame.shape[:2]
+            position = (10, height - 20)
+            cv2.putText(frame, f"You said: {spoken_text}", position,
                         cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 200, 200), 2)
             print(f"📥 Speech-to-Text: {spoken_text}")
 
