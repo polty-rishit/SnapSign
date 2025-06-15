@@ -4,6 +4,8 @@ import numpy as np
 import joblib
 import time
 import pyttsx3
+import speech_recognition as sr
+
 
 # ---------------- Load trained model and label encoder ----------------
 model = joblib.load("rf_model2.joblib")
@@ -28,6 +30,21 @@ prev_letter = ""
 stable_start = None
 stable_duration = 1.5  # seconds
 sentence = ""
+def recognize_speech():
+    recognizer = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("🎤 Speak now...")
+        audio = recognizer.listen(source, phrase_time_limit=5)
+        try:
+            text = recognizer.recognize_google(audio)
+            print(f"You said: {text}")
+            return text
+        except sr.UnknownValueError:
+            print("Sorry, couldn't understand that.")
+        except sr.RequestError:
+            print("Speech service is unavailable.")
+    return ""
+
 
 # ---------------- Start Webcam ----------------
 cap = cv2.VideoCapture(0)
@@ -90,6 +107,12 @@ while cap.isOpened():
         if sentence:
             engine.say(sentence)
             engine.runAndWait()
+    elif key == ord("v"):
+        spoken_text = recognize_speech()
+        if spoken_text:
+            cv2.putText(frame, f"You said: {spoken_text}", (10, 130),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 200, 200), 2)
+            print(f"📥 Speech-to-Text: {spoken_text}")
 
 cap.release()
 cv2.destroyAllWindows()
