@@ -20,7 +20,10 @@
 
 <!-- You can add a GIF or a video here -->
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/your-gif-here.gif" alt="Demo" width="600"/>
+  <video width="640" height="360" controls>
+    <source src="https://github.com/polty-rishit/SnapSign/raw/main/Recording%202025-06-15%20102804.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
 </p>
 
 ---
