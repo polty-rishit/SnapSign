@@ -22,7 +22,7 @@
 <!-- You can add a GIF or a video here -->
 <p align="center">
   <img src="https://github.com/polty-rishit/SnapSign/blob/main/Screenshot%202025-06-15%20125504.png?raw=true">
-  <img src="">
+  <img src="https://github.com/polty-rishit/SnapSign/blob/main/Screenshot%202025-06-15%20125525.png?raw=true">
 </p>
 
 ---
