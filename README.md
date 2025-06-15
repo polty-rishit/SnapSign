@@ -85,12 +85,12 @@ git clone https://github.com/yourusername/indian-sign-language-to-speech.git
 cd indian-sign-language-to-speech
 
 🖥 Frontend Setup (React)
-cd client
+cd frontend
 npm install
 npm start
 
 ⚙ Backend Setup (Flask + OpenCV)
-cd server
+cd backend
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
