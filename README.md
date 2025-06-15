@@ -102,11 +102,11 @@ pip install flask opencv-python mediapipe numpy
 📂 Folder Structure
 indian-sign-language-to-speech/
 │
-├── client/                  # React frontend
+├── frontend/                  # React frontend
 │   ├── src/
 │   └── public/
 │
-├── server/                  # Flask backend
+├── backend/                  # Flask backend
 │   ├── app.py
 │   └── gesture_logic.py
 │
