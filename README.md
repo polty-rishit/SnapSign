@@ -1,6 +1,7 @@
 # SnapSign
 <h1 align="center">
-  🤟 Indian Sign Language to Speech Converter 🇮🇳
+  🤟 Indian Sign Language to Speech Converter 
+  An easy web based app that converts Inian Sign Language into Speech in rea time, we have trained our own model with huge database of about 40,000+ images, An effort to make a change. 
 </h1>
 
 <p align="center">
